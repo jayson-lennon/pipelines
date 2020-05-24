@@ -18,6 +18,11 @@ stages:
         cd MainProject
         dotnet build
     displayName: 'build'
+  - job: publish
+    steps:
+    - bash: dotnet publish MainProject -o release
+    - publish: $(System.DefaultWorkingDirectory)/release
+      artifact: AppRelease
 
 - stage: Test
   jobs:
@@ -40,11 +45,34 @@ stages:
         export PATH=$SONAR_SCANNER_HOME/bin:$PATH
         export SONAR_SCANNER_OPTS="-server"
 
+        cd Test/TestApi
+        dotnet test --collect:"XPlat Code Coverage" --settings coverlet-runsettings.xml
+        cd ../..
+
         sonar-scanner \
         -Dsonar.organization=jayson-lennon \
         -Dsonar.projectKey=jayson-lennon_pipelines \
         -Dsonar.sources=. \
         -Dsonar.host.url=https://sonarcloud.io \
-        -Dsonar.login=85880c2ae22b1f231b6730a1c479eb7cbe9b7dcc
+        -Dsonar.login=85880c2ae22b1f231b6730a1c479eb7cbe9b7dcc \
         -Dsonar.cs.opencover.reportsPaths=Test/TestApi/TestResults
-  displayName: 'coverage'
+    displayName: 'coverage'
+
+- stage: deploy
+  jobs:
+  - job: deploy
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'AppRelease'
+        targetPath: 'release'
+    - task: AzureRmWebAppDeployment@4
+      inputs:
+        ConnectionType: 'AzureRM'
+        azureSubscription: 'Azure subscription 1(add44282-5490-4beb-b46f-46afb591c142)'
+        appType: 'webAppLinux'
+        WebAppName: 'pipeline-app-jwl'
+        packageForLinux: '$(System.DefaultWorkingDirectory)/release'
+        RuntimeStack: 'DOTNETCORE|Latest'
+        StartupCommand: './citest'
