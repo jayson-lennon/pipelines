@@ -14,7 +14,7 @@ stages:
   jobs:
   - job: build
     steps:
-    - script: |
+    - bash: |
         cd MainProject
         dotnet build
     displayName: 'build'
@@ -22,7 +22,7 @@ stages:
   jobs:
   - job: test
     steps:
-    - script: |
+    - bash: |
         cd Test/TestApi
         dotnet test
     displayName: 'test'
