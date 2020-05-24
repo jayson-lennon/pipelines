@@ -64,7 +64,9 @@ stages:
     steps:
     - task: DownloadPipelineArtifact@2
       inputs:
-        artifact: AppRelease
+        buildType: 'current'
+        artifactName: 'AppRelease'
+        targetPath: 'release'
     - task: AzureRmWebAppDeployment@4
       inputs:
         ConnectionType: 'AzureRM'
