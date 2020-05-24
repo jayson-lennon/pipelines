@@ -1,0 +1,50 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+stages:
+- stage: Build
+  jobs:
+  - job: build
+    steps:
+    - bash: |
+        cd MainProject
+        dotnet build
+    displayName: 'build'
+
+- stage: Test
+  jobs:
+  - job: test
+    steps:
+    - bash: |
+        cd Test/TestApi
+        dotnet test
+    displayName: 'test'
+
+- stage: Coverage
+  jobs:
+  - job: coverage
+    steps:
+    - bash: |
+        export SONAR_SCANNER_VERSION=4.2.0.1873
+        export SONAR_SCANNER_HOME=$HOME/.sonar/sonar-scanner-$SONAR_SCANNER_VERSION-linux
+        curl --create-dirs -sSLo $HOME/.sonar/sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-$SONAR_SCANNER_VERSION-linux.zip
+        unzip -o $HOME/.sonar/sonar-scanner.zip -d $HOME/.sonar/
+        export PATH=$SONAR_SCANNER_HOME/bin:$PATH
+        export SONAR_SCANNER_OPTS="-server"
+
+        sonar-scanner \
+        -Dsonar.organization=jayson-lennon \
+        -Dsonar.projectKey=jayson-lennon_pipelines \
+        -Dsonar.sources=. \
+        -Dsonar.host.url=https://sonarcloud.io \
+        -Dsonar.login=85880c2ae22b1f231b6730a1c479eb7cbe9b7dcc
+        -Dsonar.cs.opencover.reportsPaths=Test/TestApi/TestResults
+  displayName: 'coverage'
