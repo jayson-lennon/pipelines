@@ -40,6 +40,9 @@ stages:
         export PATH=$SONAR_SCANNER_HOME/bin:$PATH
         export SONAR_SCANNER_OPTS="-server"
 
+        cd Test/TestApi
+        dotnet test --collect:"XPlat Code Coverage" --settings coverlet-runsettings.xml
+
         sonar-scanner \
         -Dsonar.organization=jayson-lennon \
         -Dsonar.projectKey=jayson-lennon_pipelines \
