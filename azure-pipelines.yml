@@ -75,4 +75,4 @@ stages:
         WebAppName: 'pipeline-app-jwl'
         packageForLinux: '$(System.DefaultWorkingDirectory)/release'
         RuntimeStack: 'DOTNETCORE|Latest'
-        StartupCommand: 'dotnet run -p MainProject'
+        StartupCommand: 'dotnet run'
