@@ -46,7 +46,7 @@ stages:
         export SONAR_SCANNER_OPTS="-server"
 
         cd Test/TestApi
-        dotnet test /p:CollectCoverage=true \\n/p:CoverletOutputFormat=opencover
+        dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
         cd ../..
 
         sonar-scanner \
