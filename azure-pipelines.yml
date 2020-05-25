@@ -55,7 +55,7 @@ stages:
         -Dsonar.sources=. \
         -Dsonar.host.url=https://sonarcloud.io \
         -Dsonar.login=85880c2ae22b1f231b6730a1c479eb7cbe9b7dcc \
-        -Dsonar.cs.opencover.reportsPaths=Test/TestApi/TestResults
+        -Dsonar.cs.opencover.reportsPaths=Test/TestApi/coverage.opencover.xml
     displayName: 'coverage'
 
 - stage: deploy
